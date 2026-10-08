@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN" data-bs-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SegBench · 模型评测</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/vendor/tabler.min.css"></head>
+<body><div class="page">
+<header class="navbar navbar-expand-md d-print-none"><div class="container-xl">
+<a class="navbar-brand navbar-brand-autodark fw-bold" href="/">SegBench</a>
+<div class="navbar-nav flex-row order-md-last gap-3"><span id="engine" class="status status-green">Runtime</span><a class="btn btn-sm" href="http://127.0.0.1:4200/">影像工作台</a></div>
+</div></header>
+<div class="navbar-expand-md"><div class="navbar"><div class="container-xl"><ul class="navbar-nav flex-row gap-4"><li class="nav-item active"><a class="nav-link" href="/gpu.html">实验概览</a></li><li class="nav-item"><a class="nav-link" href="/index.html">Mask 回归</a></li><li class="nav-item"><a class="nav-link" href="https://github.com/scigjh1/segbench-evaluation-platform" target="_blank" rel="noopener">GitHub</a></li></ul></div></div></div>
+<div class="page-wrapper"><div class="page-header d-print-none">
+<div class="container-xl">
+<div class="row g-2 align-items-center">
+<div class="col">
+<div class="page-pretitle">EXPERIMENT OVERVIEW</div>
+<h1 class="page-title">分割模型评测</h1>
+</div>
+<div class="col-auto ms-auto d-print-none">
+<!-- BEGIN HEADER ACTIONS -->
+<div class="btn-list"><button class="btn ms-auto" id="export">导出完整原始 JSON</button></div>
+<!-- END HEADER ACTIONS -->
+</div>
+</div>
+</div>
+</div>
+<main class="page-body"><div class="container-xl"><div class="row row-deck row-cards"><div class="col-12"><div class="alert alert-secondary py-2" id="notice">读取实际运行记录…</div></div><div class="col-12"><div class="card mb-3"><div class="card-body d-flex gap-3 align-items-center flex-wrap"><label class="form-label m-0" for="report">实测工作负载</label><select class="form-select w-auto" id="report"></select></div></div></div><div class="col-12"><div class="row row-deck row-cards w-100 m-0" id="summary"></div></div><div class="col-lg-8"><div class="card">
+<div class="card-body">
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+<h2 class="card-title mb-0">推理耗时分布</h2>
+
+</div>
+<div style="height:260px"><canvas aria-label="正式测量样本的运行耗时" id="latencyChart"></canvas></div>
+<style>
+                      :root {
+                        --chart-mentions-color-0: color-mix(in srgb, transparent, var(--tblr-primary) 100%);
+                        --chart-mentions-color-1: color-mix(in srgb, transparent, var(--tblr-primary) 80%);
+                        --chart-mentions-color-2: color-mix(in srgb, transparent, var(--tblr-green) 80%);
+                      }
+                    </style>
+</div>
+</div></div><div class="col-lg-4"><div class="card h-100"><div class="card-header"><h2 class="card-title">真实公开验证回放</h2></div><div class="card-body" id="validation">尚无验证回放记录</div></div></div><div class="col-12"><section class="card mb-3"><div class="card-header"><h2 class="card-title">设备、精度与分段计时</h2></div><div class="table-responsive"><table class="table table-vcenter"><thead><tr><th>设备 / 精度</th><th>P50 / P95</th><th>吞吐 vol/s</th><th>预处理</th><th>H2D</th><th>模型推理</th><th>后处理 / D2H</th><th>峰值显存</th></tr></thead><tbody id="performance"></tbody></table></div><div class="card-footer text-secondary small" id="protocol"></div></section></div><div class="col-12"><div class="card h-100"><div class="card-header"><h2 class="card-title">精度模式回归</h2></div><div class="card-body" id="precision"></div></div></div><div class="col-12"><section class="card mb-3"><div class="card-header"><h2 class="card-title">病例级运行记录</h2><button class="btn btn-sm ms-auto" id="refresh">刷新</button></div><div class="card-body d-flex gap-2 flex-wrap"><select class="form-select w-auto" id="baseline"></select><select class="form-select w-auto" id="candidate"></select><button class="btn btn-primary" id="compare">比较两次运行</button><span class="text-secondary small">同病例、相同推理工作负载；权重变化才标记为模型版本回归。</span></div><div class="card-body pt-0" id="comparison"></div><div class="table-responsive"><table class="table table-vcenter"><thead><tr><th>Run / Case</th><th>模型 / 版本</th><th>设备 / 精度</th><th>Dice</th><th>HD95</th><th>Runtime</th><th>风险比例</th><th>复核</th></tr></thead><tbody id="cases"></tbody></table></div><div class="card-footer text-secondary" id="errors"></div></section></div></div></div></main>
+<footer class="footer footer-transparent d-print-none"><div class="container-xl"><div class="row align-items-center"><div class="col">SegBench · 实验与回归</div><div class="col-auto"><a href="https://github.com/tabler/tabler">Tabler</a> / MIT · <span class="text-secondary">实测数据与原始记录</span></div></div></div></footer>
+</div></div><template id="metricCard"><div class="card">
+<div class="card-body">
+<div class="d-flex align-items-center">
+<div class="subheader" data-metric-label="">Device / Precision</div>
+
+</div>
+<div class="d-flex align-items-baseline">
+<div class="h1 mb-0 me-2" data-metric-value="">—</div>
+
+</div>
+</div>
+<div class="card-body pt-0 text-secondary small" data-metric-detail="">P50 runtime</div>
+<style>
+                    :root {
+                      --chart-revenue-bg-color-0: color-mix(in srgb, transparent, var(--tblr-chart-1) 100%);
+                      --chart-revenue-bg-fill-0: color-mix(in srgb, transparent, var(--tblr-chart-1) 16%);
+                    }
+                  </style>
+</div></template><script src="/vendor/chart.umd.js"></script><script type="module" src="/gpu.js"></script></body></html>

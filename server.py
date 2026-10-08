@@ -15,6 +15,7 @@ from urllib.parse import parse_qs, unquote, urlparse
 
 import cv2
 import numpy as np
+from runtime_bridge import runtime_data, compare_runs
 
 
 ROOT = Path(__file__).resolve().parent
@@ -173,6 +174,12 @@ class SegBenchHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:  # noqa: N802
         parsed = urlparse(self.path)
         path = unquote(parsed.path)
+        if path.startswith('/api/runtime/'):
+            try:
+                self.send_json({'ok':True,'result':runtime_data(path.rsplit('/',1)[-1])})
+            except Exception:
+                self.send_json({'ok':False,'error':'Runtime unavailable; check SEG_SCOPE_RUNTIME_URL'},HTTPStatus.SERVICE_UNAVAILABLE)
+            return
         if path == "/api/health":
             self.send_json({"status": "ok", "engine": f"OpenCV {cv2.__version__}"})
             return
@@ -192,7 +199,7 @@ class SegBenchHandler(BaseHTTPRequestHandler):
             self.wfile.write(content)
             return
         if path == "/":
-            path = "/index.html"
+            path = "/gpu.html"
         requested = (STATIC_DIR / path.lstrip("/")).resolve()
         if STATIC_DIR.resolve() not in requested.parents or not requested.is_file():
             self.send_error(HTTPStatus.NOT_FOUND)
@@ -206,6 +213,19 @@ class SegBenchHandler(BaseHTTPRequestHandler):
         self.wfile.write(content)
 
     def do_POST(self) -> None:  # noqa: N802
+        if urlparse(self.path).path == '/api/regression':
+            try:
+                length=int(self.headers.get('Content-Length','0'))
+                if not 0<length<4096:raise ValueError('Invalid regression request')
+                payload=json.loads(self.rfile.read(length))
+                runs={r['id']:r for r in runtime_data('runs')}
+                result=compare_runs(runs[payload['baseline']],runs[payload['candidate']])
+                self.send_json({'ok':True,'result':result})
+            except (ValueError,KeyError) as exc:
+                self.send_json({'ok':False,'error':str(exc)},HTTPStatus.BAD_REQUEST)
+            except Exception:
+                self.send_json({'ok':False,'error':'Runtime unavailable'},HTTPStatus.SERVICE_UNAVAILABLE)
+            return
         if urlparse(self.path).path != "/api/evaluate":
             self.send_error(HTTPStatus.NOT_FOUND)
             return

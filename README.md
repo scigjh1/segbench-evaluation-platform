@@ -1,8 +1,20 @@
 # SegBench · 分割评测与回归平台
 
-![实际合成样例页面](docs/screenshots/dashboard.jpg)
+![官方 Tabler 布局与实际 GPU 数据](docs/screenshots/gpu-dashboard.jpg)
 
 现有个人算法工程的公共版本，基于 OpenCV 和 NumPy，统一评测 Dice、IoU、Precision、Recall、Boundary F1、HD95、延迟和吞吐。由 AI 工具辅助整理。
+
+## 新版评测界面
+
+基于 [Tabler](https://github.com/tabler/tabler) 官方仪表盘的完整页面结构，沿用指标卡、图表区、表格和响应式栅格，接入保存的 GPU benchmark JSON。图表中的点来自正式测量样本。
+
+```bash
+python server.py --port 4188
+```
+
+打开 http://127.0.0.1:4188 。保存的报告独立可读；病例运行列表和复核记录需连接 `SEG_SCOPE_RUNTIME_URL` 配置的本地 SegScope 服务（默认 http://127.0.0.1:4186）。
+
+[界面源码与授权](docs/UI_SOURCE.md) · [原始测量与样本范围](docs/MEASUREMENTS.md)
 
 ## 功能
 
