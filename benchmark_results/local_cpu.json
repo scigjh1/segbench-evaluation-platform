@@ -1,0 +1,63 @@
+{
+  "timestampUtc": "2026-09-23T04:42:40.990909+00:00",
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "python": "3.12.14",
+    "opencv": "4.12.0",
+    "numpy": "2.2.6",
+    "device": "CPU"
+  },
+  "protocol": {
+    "imageWidth": 512,
+    "imageHeight": 512,
+    "samplePairsPerRun": 24,
+    "masksEvaluatedPerRun": 48,
+    "warmupRuns": 5,
+    "measuredRuns": 20,
+    "boundaryTolerancePx": 2,
+    "scope": "end-to-end Python evaluation including PNG decode, six metrics, aggregation and regression deltas"
+  },
+  "latencyMsPerFullRun": {
+    "mean": 611.75,
+    "median": 608.18,
+    "p95": 637.44,
+    "min": 585.21,
+    "max": 656.03
+  },
+  "throughputMasksPerSecond": 78.5,
+  "quality": {
+    "baseline": {
+      "dice": 0.9121,
+      "iou": 0.8457,
+      "precision": 0.9067,
+      "recall": 0.9209,
+      "boundaryF1": 0.2767,
+      "hd95": 29.9738,
+      "samples": 24,
+      "meanLatencyMs": 7.051,
+      "p95LatencyMs": 8.163,
+      "throughputFps": 141.8
+    },
+    "candidate": {
+      "dice": 0.9764,
+      "iou": 0.9541,
+      "precision": 0.9764,
+      "recall": 0.9764,
+      "boundaryF1": 0.736,
+      "hd95": 3.0573,
+      "samples": 24,
+      "meanLatencyMs": 6.862,
+      "p95LatencyMs": 7.831,
+      "throughputFps": 145.7
+    },
+    "improvement": {
+      "dice": 0.0643,
+      "iou": 0.1084,
+      "precision": 0.0697,
+      "recall": 0.0555,
+      "boundaryF1": 0.4593,
+      "hd95": 26.9165
+    }
+  }
+}

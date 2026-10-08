@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SegBench 图像分割评测与回归平台" />
+    <title>SegBench 图像分割评测与回归平台</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">SB</span><div><strong>SegBench</strong><small>分割评测与回归平台</small></div></div>
+      <div class="top-actions">
+        <span class="engine" id="engine"><i></i>连接引擎</span>
+        <button class="icon-button" id="refreshButton" type="button" aria-label="重新评测" title="重新评测"><i data-lucide="refresh-cw"></i></button>
+        <button class="button secondary" id="exportButton" type="button" disabled><i data-lucide="download"></i>导出 CSV</button>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="page-heading">
+        <div><p>MODEL QUALITY / REGRESSION</p><h1>分割评测看板</h1></div>
+        <div class="run-state"><span id="runId">EVAL-0000</span><b id="runStatus">待运行</b></div>
+      </section>
+
+      <section class="toolbar">
+        <div class="source-block">
+          <span class="label">评测数据</span>
+          <span class="dataset-badge">固定回归集 · 24 组</span>
+        </div>
+        <label class="slider-block" for="tolerance">
+          <span>边界容差 <output id="toleranceValue">2 px</output></span>
+          <input id="tolerance" type="range" min="1" max="8" value="2" />
+        </label>
+        <button class="button primary" id="runButton" type="button"><i data-lucide="play"></i>运行评测</button>
+      </section>
+
+      <section class="summary-grid">
+        <article class="metric"><span>Candidate Dice</span><strong id="dice">-</strong><small id="diceDelta">-</small></article>
+        <article class="metric"><span>Candidate IoU</span><strong id="iou">-</strong><small id="iouDelta">-</small></article>
+        <article class="metric"><span>Boundary F1</span><strong id="boundaryF1">-</strong><small id="boundaryDelta">-</small></article>
+        <article class="metric"><span>HD95</span><strong id="hd95">-</strong><small id="hd95Delta">-</small></article>
+        <article class="metric"><span>评测吞吐</span><strong id="throughput">-</strong><small>mask/s</small></article>
+        <article class="metric"><span>P95 延迟</span><strong id="p95">-</strong><small>ms / mask</small></article>
+      </section>
+
+      <section class="comparison-grid">
+        <article class="panel comparison-panel">
+          <div class="panel-heading"><div><span>01</span><h2>模型对比</h2></div><small>Baseline vs Candidate</small></div>
+          <div class="metric-bars" id="metricBars">
+            <div class="empty">运行后显示指标对比</div>
+          </div>
+        </article>
+        <article class="panel decision-panel">
+          <div class="panel-heading"><div><span>02</span><h2>回归结论</h2></div><span class="badge neutral" id="decisionBadge">待评测</span></div>
+          <dl class="decision-list">
+            <div><dt>样本数量</dt><dd id="sampleCount">-</dd></div>
+            <div><dt>Precision</dt><dd id="precision">-</dd></div>
+            <div><dt>Recall</dt><dd id="recall">-</dd></div>
+            <div><dt>平均延迟</dt><dd id="meanLatency">-</dd></div>
+          </dl>
+          <p id="decisionText">尚未生成回归结论。</p>
+        </article>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="panel-heading"><div><span>03</span><h2>逐样本结果</h2></div><div class="table-tools"><input id="searchInput" type="search" placeholder="筛选样本" /><span id="tableCount">0 条</span></div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>样本</th><th>Baseline Dice</th><th>Candidate Dice</th><th>Δ Dice</th><th>Candidate IoU</th><th>Boundary F1</th><th>HD95</th></tr></thead>
+            <tbody id="resultBody"><tr><td class="empty-row" colspan="7">暂无评测结果</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="/vendor/lucide.min.js"></script>
+    <script src="/app.js" defer></script>
+  </body>
+</html>
